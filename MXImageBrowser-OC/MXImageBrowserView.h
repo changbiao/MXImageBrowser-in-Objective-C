@@ -60,7 +60,7 @@ typedef void (^TapAction)(void);
 /**
  * @brief 默认图片索引
  */
-@property (nonatomic, assign) NSInteger defaultIndex;
+@property (nonatomic, assign) NSUInteger defaultIndex;
 
 @property (nonatomic, copy) TapAction _Nullable tapActionBlock;
 

@@ -22,6 +22,7 @@ typedef void (^MXImageBrowserActionBlock) (MXImageBrowser * _Nonnull snackbar);
  * @brief 隐藏用时
  */
 @property (nonatomic, assign) NSTimeInterval durationOut;
+@property (nonatomic, assign) NSUInteger defaultIndex;
 
 @property (nonatomic, strong) MXImageBrowserView * _Nonnull imageBrowserView;
 

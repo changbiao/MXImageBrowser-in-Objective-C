@@ -123,6 +123,14 @@ NSTimeInterval const kDefaultBrowserDurationOutTime = 0.5;
 
 #pragma mark - Setter & Getter
 
+- (void)setDefaultIndex:(NSUInteger)defaultIndex {
+    [[self imageBrowserView] setDefaultIndex:defaultIndex];
+}
+
+- (NSUInteger)defaultIndex {
+    return [[self imageBrowserView] defaultIndex];
+}
+
 - (void)setDurationIn:(NSTimeInterval)durationIn {
     if (durationIn < kDefaultBrowserDurationInTime) {
         _durationIn = kDefaultBrowserDurationInTime;
