@@ -118,8 +118,10 @@
  */
 - (void)bringWindowToTop:(NSNotification *)notification {
     if ([notification object] == nil || ![[notification object] isKindOfClass:[MXImageBrowserWindow class]]) {
-        [[MXImageBrowserWindow defaultWindow] setHidden:YES];
-        [[MXImageBrowserWindow defaultWindow] setHidden:NO];
+        dispatch_async(dispatch_get_main_queue(), ^{            
+            [[MXImageBrowserWindow defaultWindow] setHidden:YES];
+            [[MXImageBrowserWindow defaultWindow] setHidden:NO];
+        });
     }
 }
 

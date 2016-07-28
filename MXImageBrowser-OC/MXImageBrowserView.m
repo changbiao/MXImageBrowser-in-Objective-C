@@ -172,6 +172,13 @@ const CGFloat kMXToolBarHeight = 60.000;
 }
 
 - (void)reload {
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf _reload];
+    });
+}
+
+- (void)_reload {
     for (UIView *subview in [[self contentScrollView] subviews]) {
         [subview removeFromSuperview];
     }
@@ -277,6 +284,13 @@ const CGFloat kMXToolBarHeight = 60.000;
 }
 
 - (void)updateView {
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf _updateView];
+    });
+}
+
+- (void)_updateView {
     CGSize containerSize = [[MXImageBrowserWindow defaultWindow] frame].size;
     
     CGFloat x = 0;
