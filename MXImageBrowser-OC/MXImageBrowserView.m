@@ -284,13 +284,6 @@ const CGFloat kMXToolBarHeight = 60.000;
 }
 
 - (void)updateView {
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf _updateView];
-    });
-}
-
-- (void)_updateView {
     CGSize containerSize = [[MXImageBrowserWindow defaultWindow] frame].size;
     
     CGFloat x = 0;
