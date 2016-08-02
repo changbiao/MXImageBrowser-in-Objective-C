@@ -32,7 +32,10 @@ typedef NS_OPTIONS(NSInteger, MXImageBrowserDataSourceType) {
 
 typedef void (^TapAction)(void);
 
+@class MXImageBrowser;
+
 @interface MXImageBrowserView : UIView
+@property (nonatomic, strong) MXImageBrowser * _Nullable browser;
 /**
  * @brief 数据源，内容为UIImage对象
  */
@@ -57,6 +60,10 @@ typedef void (^TapAction)(void);
  * @brief 数据源类型
  */
 @property (nonatomic, assign) MXImageBrowserDataSourceType sourceType;
+/**
+ *  是否显示分享按钮
+ */
+@property (nonatomic, assign) BOOL allowsShareAction;
 /**
  * @brief 默认图片索引
  */

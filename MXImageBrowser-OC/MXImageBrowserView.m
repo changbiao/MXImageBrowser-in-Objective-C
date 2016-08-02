@@ -13,6 +13,7 @@
 #import "MXImageBrowserButton.h"
 #import "MXImageBrowserWindow.h"
 #import "UIColor+ImageBrowserColor.h"
+#import "MXImageBrowser.h"
 
 const CGFloat kMXNavigationAndStatusBarHeight = 64.000;
 const CGFloat kMXStatusBarHeight = 20.000;
@@ -20,9 +21,9 @@ const CGFloat kMXNavigationBarHeight = 44.000;
 const CGFloat kMXToolBarHeight = 60.000;
 
 @interface MXImageBrowserView ()
-@property (nonatomic, strong) UIView * _Nonnull navigator;
+@property (nonatomic, strong) UIView * _Nullable navigator;
 @property (strong, nonatomic) UIScrollView * _Nonnull contentScrollView;
-@property (nonatomic, strong) MXImageBrowserButton *shareButton;
+@property (nonatomic, strong) MXImageBrowserButton * _Nullable shareButton;
 @property (nonatomic, assign) BOOL autoScrolled;
 @property (nonatomic, strong) UILabel * _Nonnull alertLabel;
 @end
@@ -63,24 +64,29 @@ const CGFloat kMXToolBarHeight = 60.000;
                 } else {
                     image = [UIImage placeholderImage];
                 }
+                if (self.browser != nil &&
+                    self.browser.delegate != nil &&
+                    [self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithImage:)]) {
+                    failed = NO;
+                    [self.browser.delegate imageBrowser:self.browser didClickShareWithImage:image];
+                }
+//                UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+                //                self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
+                //
+                //                if (self.activityViewController != nil) {
+                //                    __weak typeof(self) weakSelf = self;
+                //                    [self.activityViewController setCompletionWithItemsHandler:^(NSString * activityType, BOOL completed, NSArray * returnedItems, NSError * activityError) {
+                //
+                //                    }];
+                //                    // iOS 8 - Set the Anchor Point for the popover
+                //                    //    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+                //                    //        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
+                //                    //    }
+                //                    UIViewController *controller = [[MXImageBrowserWindow defaultWindow] controller];
+                //                    [controller presentViewController:self.activityViewController animated:YES completion:^{
                 
-                UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
-//                self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
-//                
-//                if (self.activityViewController != nil) {
-//                    __weak typeof(self) weakSelf = self;
-//                    [self.activityViewController setCompletionWithItemsHandler:^(NSString * activityType, BOOL completed, NSArray * returnedItems, NSError * activityError) {
-//
-//                    }];
-//                    // iOS 8 - Set the Anchor Point for the popover
-//                    //    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-//                    //        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
-//                    //    }
-//                    UIViewController *controller = [[MXImageBrowserWindow defaultWindow] controller];
-//                    [controller presentViewController:self.activityViewController animated:YES completion:^{
-
-//                    }];
-//                }
+                //                    }];
+                //                }
             }
         }
     }
@@ -89,14 +95,14 @@ const CGFloat kMXToolBarHeight = 60.000;
     }
 }
 
-#pragma mark - Save Image Callback
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    if (error == NULL) {
-        [self alert:@"保存成功"];
-    } else {
-        [self alert:@"保存失败"];
-    }
-}
+//#pragma mark - Save Image Callback
+//- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+//    if (error == NULL) {
+//        [self alert:@"保存成功"];
+//    } else {
+//        [self alert:@"保存失败"];
+//    }
+//}
 
 - (void)alert:(NSString *)text {
     [[self alertLabel] setText:text];
@@ -142,27 +148,38 @@ const CGFloat kMXToolBarHeight = 60.000;
                               kMXNavigationBarHeight,
                               kMXNavigationBarHeight);
     [self setShareButton:[MXImageBrowserButton circularShadowButtonWithTitle:@""
-                                                                      frame:frame
-                                                      normalBackgroundColor:[UIColor browserButtonColor]
-                                                                   selected:[UIColor browserButtonColor]
-                                                           normalTitleColor:[UIColor whiteColor]
-                                                         selectedTitleColor:[UIColor whiteColor]
-                                                                     target:self
+                                                                       frame:frame
+                                                       normalBackgroundColor:[UIColor browserButtonColor]
+                                                                    selected:[UIColor browserButtonColor]
+                                                            normalTitleColor:[UIColor whiteColor]
+                                                          selectedTitleColor:[UIColor whiteColor]
+                                                                      target:self
                                                                       action:@selector(share)]];
     [[self shareButton] setImage:[UIImage imageNamed:@"share_browser"] forState:UIControlStateNormal];
     [[self navigator] addSubview:[self shareButton]];
     
+    if (!self.allowsShareAction) {
+        [[self navigator] setHidden:YES];
+    }
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [self addGestureRecognizer:tap];
     
-    [self setAlertLabel:[[UILabel alloc] initWithFrame:[self bounds]]];
-    [[self alertLabel] setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.7]];
-    [[self alertLabel] setClipsToBounds:YES];
-    [[[self alertLabel] layer] setCornerRadius:3];
-    [[self alertLabel] setAlpha:0];
-    [[self alertLabel] setTextColor:[UIColor whiteColor]];
-    [[self alertLabel] setTextAlignment:NSTextAlignmentCenter];
-    [self addSubview:[self alertLabel]];
+//    [self setAlertLabel:[[UILabel alloc] initWithFrame:[self bounds]]];
+//    [[self alertLabel] setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.7]];
+//    [[self alertLabel] setClipsToBounds:YES];
+//    [[[self alertLabel] layer] setCornerRadius:3];
+//    [[self alertLabel] setAlpha:0];
+//    [[self alertLabel] setTextColor:[UIColor whiteColor]];
+//    [[self alertLabel] setTextAlignment:NSTextAlignmentCenter];
+//    [self addSubview:[self alertLabel]];
+}
+
+- (void)setAllowsShareAction:(BOOL)allowsShareAction {
+    _allowsShareAction = allowsShareAction;
+    if ([self navigator] != nil) {
+        [[self navigator] setHidden:!(allowsShareAction)];
+    }
 }
 
 - (void)tap:(UITapGestureRecognizer *)tap {

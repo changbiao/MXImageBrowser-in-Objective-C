@@ -13,6 +13,13 @@
 @class MXImageBrowser;
 typedef void (^MXImageBrowserActionBlock) (MXImageBrowser * _Nonnull snackbar);
 
+@protocol MXImageBrowserDelegate <NSObject>
+
+@optional
+- (void)imageBrowser:(MXImageBrowser * _Nonnull)browser didClickShareWithImage:(UIImage * _Nullable)image;
+
+@end
+
 @interface MXImageBrowser : NSOperation
 /**
  * @brief 显示用时
@@ -23,6 +30,11 @@ typedef void (^MXImageBrowserActionBlock) (MXImageBrowser * _Nonnull snackbar);
  */
 @property (nonatomic, assign) NSTimeInterval durationOut;
 @property (nonatomic, assign) NSUInteger defaultIndex;
+@property (nonatomic, strong) id<MXImageBrowserDelegate> _Nullable delegate;
+/**
+ *  是否显示分享按钮
+ */
+@property (nonatomic, assign) BOOL allowsShareAction;
 
 @property (nonatomic, strong) MXImageBrowserView * _Nonnull imageBrowserView;
 
@@ -45,6 +57,10 @@ typedef void (^MXImageBrowserActionBlock) (MXImageBrowser * _Nonnull snackbar);
  *  Show MXImageBrowser
  */
 - (void)show;
+/**
+ *  Show MXImageBrowser
+ */
+- (void)showWithDelegate:(id<MXImageBrowserDelegate> _Nullable)delegate;
 /**
  *  Hide MXImageBrowser
  */

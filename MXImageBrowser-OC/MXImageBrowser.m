@@ -114,6 +114,14 @@ NSTimeInterval const kDefaultBrowserDurationOutTime = 0.5;
 //    [[self names] addObjectsFromArray:names];
 //}
 
+- (void)setAllowsShareAction:(BOOL)allowsShareAction {
+    [[self imageBrowserView] setAllowsShareAction:allowsShareAction];
+}
+
+- (BOOL)allowsShareAction {
+    return [[self imageBrowserView] allowsShareAction];
+}
+
 #pragma mark - Button Action
 - (void)buttonAction {
     if (self.clickButtonListener) {
@@ -150,6 +158,7 @@ NSTimeInterval const kDefaultBrowserDurationOutTime = 0.5;
 - (MXImageBrowserView *)imageBrowserView {
     if (_imageBrowserView == nil) {
         _imageBrowserView = [MXImageBrowserView new];
+        [_imageBrowserView setBrowser:self];
     }
     return _imageBrowserView;
 }
@@ -177,6 +186,11 @@ NSTimeInterval const kDefaultBrowserDurationOutTime = 0.5;
 #pragma mark - Show & Hide
 - (void)show {
     [[MXImageBrowserManager defaultManager] addMXImageBrowser:self];
+}
+
+- (void)showWithDelegate:(id<MXImageBrowserDelegate> _Nullable)delegate {
+    [self setDelegate:delegate];
+    [self show];
 }
 
 - (void)hide {
@@ -238,10 +252,12 @@ NSTimeInterval const kDefaultBrowserDurationOutTime = 0.5;
 - (void)cancel {
     [super cancel];
     [self finish];
-    [[self imageBrowserView] removeFromSuperview];
 }
 
 - (void)finish {
+    [[self imageBrowserView] removeFromSuperview];
+    [[self imageBrowserView] setBrowser:nil];
+    [self setDelegate:nil];
     [self setExecuting:NO];
     [self setFinished:YES];
 }
