@@ -52,44 +52,50 @@ const CGFloat kMXToolBarHeight = 60.000;
 - (void)share {
     NSInteger index = _contentScrollView.contentOffset.x / [_contentScrollView frame].size.width;
     BOOL failed = YES;
-    if ([[[self contentScrollView] subviews] count] > index) {
-        UIView *content = [[[self contentScrollView] subviews] objectAtIndex:index];
-        for (UIView *sub in [content subviews]) {
-            if ([sub isKindOfClass:[MXPhotoView class]]) {
-                failed = NO;
-                MXPhotoView *photoView = (MXPhotoView *)sub;
-                UIImage *image;
-                if ([photoView image] != nil) {
-                    image = [[photoView image] copy];
-                } else {
-                    image = [UIImage placeholderImage];
+    if (self.browser != nil &&
+        self.browser.delegate != nil) {
+        if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithIndex:)]) {
+            if ([[[self contentScrollView] subviews] count] > index) {
+                UIView *content = [[[self contentScrollView] subviews] objectAtIndex:index];
+                for (UIView *sub in [content subviews]) {
+                    if ([sub isKindOfClass:[MXPhotoView class]]) {
+                        failed = NO;
+                        MXPhotoView *photoView = (MXPhotoView *)sub;
+                        UIImage *image;
+                        if ([photoView image] != nil) {
+                            image = [[photoView image] copy];
+                        } else {
+                            image = [UIImage placeholderImage];
+                        }
+                        failed = NO;
+                        [self.browser.delegate imageBrowser:self.browser didClickShareWithImage:image];
+                        
+                        //                UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+                        //                self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
+                        //
+                        //                if (self.activityViewController != nil) {
+                        //                    __weak typeof(self) weakSelf = self;
+                        //                    [self.activityViewController setCompletionWithItemsHandler:^(NSString * activityType, BOOL completed, NSArray * returnedItems, NSError * activityError) {
+                        //
+                        //                    }];
+                        //                    // iOS 8 - Set the Anchor Point for the popover
+                        //                    //    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+                        //                    //        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
+                        //                    //    }
+                        //                    UIViewController *controller = [[MXImageBrowserWindow defaultWindow] controller];
+                        //                    [controller presentViewController:self.activityViewController animated:YES completion:^{
+                        
+                        //                    }];
+                        //                }
+                    }
                 }
-                if (self.browser != nil &&
-                    self.browser.delegate != nil &&
-                    [self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithImage:)]) {
-                    failed = NO;
-                    [self.browser.delegate imageBrowser:self.browser didClickShareWithImage:image];
-                }
-//                UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
-                //                self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
-                //
-                //                if (self.activityViewController != nil) {
-                //                    __weak typeof(self) weakSelf = self;
-                //                    [self.activityViewController setCompletionWithItemsHandler:^(NSString * activityType, BOOL completed, NSArray * returnedItems, NSError * activityError) {
-                //
-                //                    }];
-                //                    // iOS 8 - Set the Anchor Point for the popover
-                //                    //    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-                //                    //        self.activityViewController.popoverPresentationController.barButtonItem = _actionButton;
-                //                    //    }
-                //                    UIViewController *controller = [[MXImageBrowserWindow defaultWindow] controller];
-                //                    [controller presentViewController:self.activityViewController animated:YES completion:^{
-                
-                //                    }];
-                //                }
             }
+        } else if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithImage:)]) {
+            failed = NO;
+            [self.browser.delegate imageBrowser:self.browser didClickShareWithIndex:index];
         }
     }
+    
     if (failed) {
         [self alert:@"保存失败"];
     }

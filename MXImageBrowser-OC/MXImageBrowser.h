@@ -17,6 +17,7 @@ typedef void (^MXImageBrowserActionBlock) (MXImageBrowser * _Nonnull snackbar);
 
 @optional
 - (void)imageBrowser:(MXImageBrowser * _Nonnull)browser didClickShareWithImage:(UIImage * _Nullable)image;
+- (void)imageBrowser:(MXImageBrowser * _Nonnull)browser didClickShareWithIndex:(NSUInteger)index;
 
 @end
 
