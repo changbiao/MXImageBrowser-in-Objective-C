@@ -27,3 +27,10 @@ NSMutableArray <NSURL *>*arr = [NSMutableArray array];
 ```
 [[MXImageBrowser browserWithImages:@[[UIImage imageNamed:@"Detail"], [UIImage imageNamed:@"Logo"]] descriptions:nil] show];
 ```
+
+```
+MXImageBrowser *browser = [MXImageBrowser browserWithImages:@[[UIImage imageNamed:@"Detail"], [UIImage imageNamed:@"Logo"]] descriptions:nil];
+// Since 3.0.0:
+[browser setAllowsShareAction:YES];
+[browser showWithDelegate:self];
+```
