@@ -54,7 +54,8 @@ const CGFloat kMXToolBarHeight = 60.000;
     BOOL failed = YES;
     if (self.browser != nil &&
         self.browser.delegate != nil) {
-        if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithIndex:)]) {
+        
+        if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithImage:)]) {
             if ([[[self contentScrollView] subviews] count] > index) {
                 UIView *content = [[[self contentScrollView] subviews] objectAtIndex:index];
                 for (UIView *sub in [content subviews]) {
@@ -90,7 +91,7 @@ const CGFloat kMXToolBarHeight = 60.000;
                     }
                 }
             }
-        } else if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithImage:)]) {
+        } else if ([self.browser.delegate respondsToSelector:@selector(imageBrowser:didClickShareWithIndex:)]) {
             failed = NO;
             [self.browser.delegate imageBrowser:self.browser didClickShareWithIndex:index];
         }
